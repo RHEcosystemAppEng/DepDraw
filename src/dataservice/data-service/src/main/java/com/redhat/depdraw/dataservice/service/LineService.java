@@ -21,12 +21,11 @@ public class LineService {
     public Line createLine(String diagramId, Line line) {
         UUID uuid = UUID.randomUUID();
         line.setUuid(uuid.toString());
-        line.setDiagramID(diagramId);
 
-        final Line createdLine = lineDao.create(line);
+        final Line createdLine = lineDao.create(diagramId, line);
 
-        final Diagram diagram = diagramService.getDiagramById(line.getDiagramID());
-        diagram.getLinesID().add(line.getUuid());
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
+        diagram.getLinesID().add(createdLine);
 
         diagramService.updateDiagram(diagram);
 
@@ -42,9 +41,9 @@ public class LineService {
 
         if(line != null) {
             lineDao.deleteLineById(diagramId, lineId);
-            final Diagram diagram = diagramService.getDiagramById(line.getDiagramID());
+            final Diagram diagram = diagramService.getDiagramById(diagramId);
             if(diagram != null){
-                diagram.getLinesID().remove(lineId);
+                diagram.getLinesID().remove(line);
             }
 
             diagramService.updateDiagram(diagram);

@@ -3,6 +3,7 @@ package com.redhat.depdraw.dataservice.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
 import com.redhat.depdraw.model.Diagram;
 import com.redhat.depdraw.model.DiagramResource;
@@ -19,12 +20,11 @@ public class DiagramResourceService {
     DiagramService diagramService;
 
     public DiagramResource createDiagramResource(String diagramId, DiagramResource diagramResource) {
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
         UUID uuid = UUID.randomUUID();
         diagramResource.setUuid(uuid.toString());
-        diagramResource.setDiagramID(diagramId);
-        final DiagramResource createdDiagramResource = diagramResourceDao.create(diagramResource);
-        final Diagram diagram = diagramService.getDiagramById(diagramResource.getDiagramID());
-        diagram.getResourcesID().add(createdDiagramResource.getUuid());
+        final DiagramResource createdDiagramResource = diagramResourceDao.create(diagramId, diagramResource);
+        diagram.getResourcesID().add(diagramResource);
 
         diagramService.updateDiagram(diagram);
 
@@ -36,10 +36,11 @@ public class DiagramResourceService {
     }
 
     public void deleteDiagramResourceById(String diagramId, String diagramResourceId) {
+        DiagramResource diagramResource = getDiagramResourceById(diagramId, diagramResourceId);
         diagramResourceDao.deleteDiagramResourceById(diagramId, diagramResourceId);
 
         final Diagram diagram = diagramService.getDiagramById(diagramId);
-        diagram.getResourcesID().remove(diagramResourceId);
+        diagram.getResourcesID().remove(diagramResource);
 
         diagramService.updateDiagram(diagram);
     }

@@ -24,10 +24,10 @@ public class LineDaoImpl implements LineDao {
     ObjectMapper objectMapper;
 
     @Override
-    public Line create(Line l) {
+    public Line create(String diagramId, Line l) {
         try {
             final String s = objectMapper.writeValueAsString(l);
-            final String pathString = FileUtil.DIAGRAM_FILES_DIR + l.getDiagramID() + "/" + FileUtil.LINE_FILES_DIR + l.getUuid() + "/";
+            final String pathString = FileUtil.DIAGRAM_FILES_DIR + diagramId + "/" + FileUtil.LINE_FILES_DIR + l.getUuid() + "/";
             Path path = Path.of(pathString);
 
             Files.createDirectories(path);

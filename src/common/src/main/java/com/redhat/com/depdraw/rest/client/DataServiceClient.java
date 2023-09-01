@@ -1,16 +1,14 @@
-package com.redhat.depdraw.transformer;
+package com.redhat.com.depdraw.rest.client;
 
 import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.Line;
 import com.redhat.depdraw.model.LineCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.POST;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import java.util.List;
 
 
@@ -38,4 +36,9 @@ public interface DataServiceClient {
     @GET
     @Path("/linecatalogs/{lineCatalogId}/")
     LineCatalog getLineCatalogById(@PathParam("lineCatalogId") String lineCatalogId);
+
+    @GET
+    @Path("/diagrams/{diagramId}/resources")
+    @Produces(MediaType.APPLICATION_JSON)
+    List<DiagramResource> getDiagramResources(@PathParam("diagramId") String diagramId);
 }

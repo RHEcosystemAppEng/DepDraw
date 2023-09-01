@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.redhat.com.depdraw.rest.client.DataServiceClient;
 import com.redhat.depdraw.model.Line;
 import com.redhat.depdraw.model.LineCatalog;
 import jakarta.inject.Inject;
@@ -44,7 +45,7 @@ public class TransformerResource {
             String sourceId = l.getSource();
             String destinationId = l.getDestination();
 
-            LineCatalog lineCatalog = dataServiceClient.getLineCatalogById(l.getLineCatalogID());
+            LineCatalog lineCatalog = dataServiceClient.getLineCatalogById(l.getLineCatalog().getUuid());
             String srcDefinition = dataServiceClient.getDefinition(diagramId, sourceId);
             String destDefinition = dataServiceClient.getDefinition(diagramId, destinationId);
             try {

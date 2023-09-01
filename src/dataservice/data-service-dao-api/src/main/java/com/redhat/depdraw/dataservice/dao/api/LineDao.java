@@ -5,7 +5,7 @@ import java.util.List;
 import com.redhat.depdraw.model.Line;
 
 public interface LineDao {
-    Line create(Line l);
+    Line create(String diagramId, Line l);
 
     Line getLineById(String diagramId, String lineId);
 

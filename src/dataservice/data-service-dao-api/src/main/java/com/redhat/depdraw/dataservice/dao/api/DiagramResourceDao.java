@@ -5,7 +5,7 @@ import java.util.List;
 import com.redhat.depdraw.model.DiagramResource;
 
 public interface DiagramResourceDao {
-    DiagramResource create(DiagramResource dr);
+    DiagramResource create(String diagramId, DiagramResource dr);
 
     DiagramResource getDiagramResourceById(String diagramId, String diagramResourceId);
 

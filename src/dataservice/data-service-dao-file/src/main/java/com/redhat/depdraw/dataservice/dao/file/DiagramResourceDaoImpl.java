@@ -23,10 +23,10 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
     ObjectMapper objectMapper;
 
     @Override
-    public DiagramResource create(DiagramResource dr) {
+    public DiagramResource create(String diagramId, DiagramResource dr) {
         try {
             final String s = objectMapper.writeValueAsString(dr);
-            final String pathString = FileUtil.DIAGRAM_FILES_DIR + dr.getDiagramID() + "/" + FileUtil.DIAGRAM_RESOURCES_FILES_DIR + dr.getUuid() + "/";
+            final String pathString = FileUtil.DIAGRAM_FILES_DIR + diagramId + "/" + FileUtil.DIAGRAM_RESOURCES_FILES_DIR + dr.getUuid() + "/";
             Path path = Path.of(pathString);
 
             Files.createDirectories(path);

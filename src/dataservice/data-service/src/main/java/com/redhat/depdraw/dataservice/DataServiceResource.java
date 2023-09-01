@@ -41,6 +41,7 @@ public class DataServiceResource {
     @Inject
     K8SResourceSchemaService k8sResourceSchemaService;
 
+
     @POST
     @Path("/diagrams")
     public Response createDiagram(Diagram diagram) {
@@ -51,6 +52,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getDiagramById(@PathParam("diagramId") String diagramId) {
           final Diagram diagram = diagramService.getDiagramById(diagramId);
 
@@ -59,6 +62,8 @@ public class DataServiceResource {
 
     @DELETE
     @Path("/diagrams/{diagramId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteDiagramById(@PathParam("diagramId") String diagramId) {
         diagramService.deleteDiagramById(diagramId);
 
@@ -67,6 +72,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getDiagrams() {
         List<Diagram> diagrams = diagramService.getDiagrams();
 
@@ -75,6 +82,8 @@ public class DataServiceResource {
 
     @POST
     @Path("/diagrams/{diagramId}/lines")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createLine(@PathParam("diagramId") String diagramId, Line line) {
         final Line createdLine = lineService.createLine(diagramId, line);
 
@@ -83,6 +92,8 @@ public class DataServiceResource {
 
     @DELETE
     @Path("/diagrams/{diagramId}/lines/{lineId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteLineById(@PathParam("diagramId") String diagramId, @PathParam("lineId") String lineId) {
         lineService.deleteLineById(diagramId, lineId);
 
@@ -91,6 +102,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}/lines/{lineId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLineById(@PathParam("diagramId") String diagramId, @PathParam("lineId") String lineId) {
         final Line line = lineService.getLineById(diagramId, lineId);
 
@@ -99,6 +112,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}/lines")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLines(@PathParam("diagramId") String diagramId) {
         List<Line> lines = lineService.getLines(diagramId);
 
@@ -107,6 +122,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/linecatalogs/{lineCatalogId}/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLineCatalogById(@PathParam("lineCatalogId") String lineCatalogId) {
         final LineCatalog lineCatalog = lineCatalogService.getLineCatalogById(lineCatalogId);
 
@@ -115,6 +132,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/linecatalogs/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLineCatalogs() {
         final List<LineCatalog> lineCatalogs = lineCatalogService.getLineCatalogs();
 
@@ -123,6 +142,8 @@ public class DataServiceResource {
 
     @POST
     @Path("/diagrams/{diagramId}/resources")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createDiagramResource(@PathParam("diagramId") String diagramId, DiagramResource diagramResource) {
         final DiagramResource createdDiagramResource = diagramResourceService.createDiagramResource(diagramId, diagramResource);
 
@@ -131,6 +152,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}/resources/{diagramResourceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getDiagramResourceById(@PathParam("diagramId") String diagramId, @PathParam("diagramResourceId") String diagramResourceId) {
         final DiagramResource diagramResource = diagramResourceService.getDiagramResourceById(diagramId, diagramResourceId);
 
@@ -139,6 +162,8 @@ public class DataServiceResource {
 
     @DELETE
     @Path("/diagrams/{diagramId}/resources/{diagramResourceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteDiagramResourceById(@PathParam("diagramId") String diagramId, @PathParam("diagramResourceId") String diagramResourceId) {
         diagramResourceService.deleteDiagramResourceById(diagramId, diagramResourceId);
 
@@ -147,12 +172,14 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}/resources/{diagramResourceId}/schema")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getDiagramResourceSchemaById(@PathParam("diagramId") String diagramId,
             @PathParam("diagramResourceId") String diagramResourceId) {
         final DiagramResource diagramResource = diagramResourceService.getDiagramResourceById(diagramId,
                 diagramResourceId);
         final ResourceCatalog resourceCatalog = resourceCatalogService
-                .getResourceCatalogById(diagramResource.getResourceCatalogID());
+                .getResourceCatalogById(diagramResource.getResourceCatalog().getUuid());
         final String k8sResourceSchema = k8sResourceSchemaService
                 .getK8sResourceSchemaById(resourceCatalog.getK8sResourceSchemaRef());
 
@@ -161,6 +188,8 @@ public class DataServiceResource {
 
     @POST
     @Path("/diagrams/{diagramId}/resources/{diagramResourceId}/definition")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response updateDefinition(@PathParam("diagramId") String diagramId,
             @PathParam("diagramResourceId") String diagramResourceId, String body) {
                 diagramResourceService.updateDiagramResourceDefinition(diagramId, diagramResourceId, body);
@@ -169,6 +198,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}/resources/{diagramResourceId}/definition")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getDefinition(@PathParam("diagramId") String diagramId,
             @PathParam("diagramResourceId") String diagramResourceId) {
         return Response.ok(diagramResourceService.getDiagramResourceDefinition(diagramId, diagramResourceId)).build();
@@ -176,6 +207,7 @@ public class DataServiceResource {
 
     @GET
     @Path("/diagrams/{diagramId}/resources")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDiagramResources(@PathParam("diagramId") String diagramId) {
         List<DiagramResource> diagramsResources = diagramResourceService.getDiagramResources(diagramId);
@@ -185,6 +217,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/resourcecatalogs/{resourceCatalogId}/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getResourceCatalogById(@PathParam("resourceCatalogId") String resourceCatalogId) {
         final ResourceCatalog resourceCatalog = resourceCatalogService.getResourceCatalogById(resourceCatalogId);
 
@@ -193,6 +227,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/k8sresourceschemas/{k8sResourceschemaId}/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getK8sResourceschemaById(@PathParam("k8sResourceschemaId") String k8sResourceschemaId) {
         final String k8sResourceSchema = k8sResourceSchemaService.getK8sResourceSchemaById(k8sResourceschemaId);
 
@@ -201,6 +237,8 @@ public class DataServiceResource {
 
     @GET
     @Path("/health")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response health() {
         return Response.ok().build();
     }

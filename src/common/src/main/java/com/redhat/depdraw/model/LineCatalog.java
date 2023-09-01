@@ -2,6 +2,8 @@ package com.redhat.depdraw.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,6 +17,9 @@ import lombok.ToString;
 @Setter
 @ToString(exclude = "uuid")
 @EqualsAndHashCode(exclude = "uuid")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "uuid")
 public class LineCatalog {
     public static final String INHERIT_LABELS = "Inherit Labels";
     public static final String INHERIT_ANNOTATIONS = "Inherit Annotations";

@@ -3,13 +3,11 @@ package com.redhat.depdraw;
 import java.util.List;
 import java.util.Set;
 
+import com.redhat.depdraw.model.*;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ResponseBody;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import com.redhat.depdraw.model.Diagram;
-import com.redhat.depdraw.model.DiagramResource;
-import com.redhat.depdraw.model.Line;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -110,16 +108,18 @@ public class DataServiceTest {
 
     @Test
     public void testDeleteDiagramWithMultipleDiagramResources() {
+        ResourceCatalog rc1 = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
+        ResourceCatalog rc2 = new ResourceCatalog("0ab01ee0-8211-11ed-a1eb-0242ac120002", "ResourceCatalog2", "");
         Diagram d = new Diagram();
         d.setName("testDiagram");
 
         DiagramResource dr = new DiagramResource();
         dr.setName("testDiagramResource");
-        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setResourceCatalog(rc1);
 
         DiagramResource dr2 = new DiagramResource();
         dr2.setName("testDiagramResource2");
-        dr2.setResourceCatalogID("0ab01ee0-8211-11ed-a1eb-0242ac120002");
+        dr2.setResourceCatalog(rc2);
         //Create Diagram
         final String uuid = given().body(d)
                 .contentType(ContentType.JSON)
@@ -223,15 +223,17 @@ public class DataServiceTest {
 
      @Test
      public void testDeleteDiagramWithMultipleLines() {
+         ResourceCatalog rc1 = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
+         ResourceCatalog rc2 = new ResourceCatalog("0ab01ee0-8211-11ed-a1eb-0242ac120002", "ResourceCatalog2", "");
          Diagram d = new Diagram();
          d.setName("testDiagram");
 
          DiagramResource dr = new DiagramResource();
          dr.setName("testDiagramResource");
-         dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+         dr.setResourceCatalog(rc1);
          DiagramResource dr2 = new DiagramResource();
          dr2.setName("testDiagramResource2");
-         dr2.setResourceCatalogID("0ab01ee0-8211-11ed-a1eb-0242ac120002");
+         dr2.setResourceCatalog(rc2);
          //Create Diagram
          final String uuid = given().body(d)
                  .contentType(ContentType.JSON)
@@ -299,21 +301,19 @@ public class DataServiceTest {
                  .statusCode(200)
                  .body("", iterableWithSize(2));
 
-         //Get all DiagramResources
+         //Get lineCatalog
          String lcuuid = "ef18d3dc-8cf8-11ed-a1eb-0242ac120002";
-         given()
+         LineCatalog lineCatalog = given()
                  .contentType(ContentType.JSON)
-                 .when().get("/linecatalogs/{lineCatalogId}", lcuuid)
-                 .then()
-                 .statusCode(200)
-                 .body("uuid", equalTo(lcuuid))
-                 .body("name", equalTo("Inherit Labels"))
-                 .body("rules", hasSize(1));
+                 .when().get("/linecatalogs/{lineCatalogId}", lcuuid).as(LineCatalog.class);
+         Assertions.assertEquals("uuid", lineCatalog.getUuid());
+         Assertions.assertEquals("Inherit Labels", lineCatalog.getName());
+         Assertions.assertEquals(1, lineCatalog.getRules().size());
 
          Line line = new Line();
          line.setDestination(drUuid);
          line.setSource(drUuid2);
-         line.setLineCatalogID(lcuuid);
+         line.setLineCatalog(lineCatalog);
 
          //Create another DiagramResource
          final String lineUuid = given().body(line)
@@ -393,12 +393,13 @@ public class DataServiceTest {
 
     @Test
     public void testDeleteDiagramResources() {
+        ResourceCatalog rc = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
         Diagram d = new Diagram();
         d.setName("testDiagram");
 
         DiagramResource dr = new DiagramResource();
         dr.setName("testDiagramResource");
-        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setResourceCatalog(rc);
         //Create Diagram
         final String uuid = given().body(d)
                 .contentType(ContentType.JSON)
@@ -486,12 +487,13 @@ public class DataServiceTest {
 
     @Test
     public void testUpdateDefinition() {
+        ResourceCatalog rc = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
         Diagram d = new Diagram();
         d.setName("testDiagram");
 
         DiagramResource dr = new DiagramResource();
         dr.setName("testDiagramResource");
-        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setResourceCatalog(rc);
 
         //Create Diagram
         final String uuid = given().body(d)
