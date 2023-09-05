@@ -2,6 +2,8 @@ package com.redhat.depdraw.dataservice;
 
 import java.util.List;
 
+import com.redhat.depdraw.dto.DiagramResourceDTO;
+import com.redhat.depdraw.dto.LineDTO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -57,7 +59,7 @@ public class DataServiceResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDiagramById(@PathParam("diagramId") String diagramId) {
-          final Diagram diagram = diagramService.getDiagramById(diagramId);
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
 
         return Response.ok(diagram).build();
     }
@@ -86,8 +88,8 @@ public class DataServiceResource {
     @Path("/diagrams/{diagramId}/lines")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLine(@PathParam("diagramId") String diagramId, Line line) {
-        final Line createdLine = lineService.createLine(diagramId, line);
+    public Response createLine(@PathParam("diagramId") String diagramId, LineDTO lineDTO) {
+        final Line createdLine = lineService.createLine(diagramId, lineDTO.getLineCatalogID(), lineDTO.getSource(), lineDTO.getDestination());
 
         return Response.ok(createdLine).build();
     }
@@ -146,8 +148,8 @@ public class DataServiceResource {
     @Path("/diagrams/{diagramId}/resources")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createDiagramResource(@PathParam("diagramId") String diagramId, DiagramResource diagramResource) {
-        final DiagramResource createdDiagramResource = diagramResourceService.createDiagramResource(diagramId, diagramResource);
+    public Response createDiagramResource(@PathParam("diagramId") String diagramId, DiagramResourceDTO dto) {
+        final DiagramResource createdDiagramResource = diagramResourceService.createDiagramResource(diagramId, dto.getName(), dto.getResourceCatalogID(), dto.getType(), dto.getPosX(), dto.getPosY());
 
         return Response.ok(createdDiagramResource).build();
     }

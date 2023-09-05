@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.redhat.depdraw.dto.DiagramResourceDTO;
+import com.redhat.depdraw.dto.LineDTO;
 import com.redhat.depdraw.model.*;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ResponseBody;
@@ -18,7 +19,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.nullValue;
 
 @QuarkusTest
 public class DataServiceTest {
@@ -48,8 +48,8 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", emptyCollectionOf(Set.class))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", emptyCollectionOf(Set.class))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Delete Diagram
@@ -111,18 +111,25 @@ public class DataServiceTest {
 
     @Test
     public void testDeleteDiagramWithMultipleDiagramResources() throws JsonProcessingException {
-        ResourceCatalog rc1 = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
-        ResourceCatalog rc2 = new ResourceCatalog("0ab01ee0-8211-11ed-a1eb-0242ac120002", "ResourceCatalog2", "");
+        ResourceCatalog rc1 = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "Service", "f54012e8-8311-11ed-a1eb-0242ac120002");
+        ResourceCatalog rc2 = new ResourceCatalog("0ab01ee0-8211-11ed-a1eb-0242ac120002", "POD", "3cfea982-7ec6-11ed-a1eb-0242ac120002");
         Diagram d = new Diagram();
         d.setName("testDiagram");
 
-        DiagramResource dr = new DiagramResource();
+        DiagramResourceDTO dr = new DiagramResourceDTO();
         dr.setName("testDiagramResource");
-        dr.setResourceCatalog(rc1);
+        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setPosX(1);
+        dr.setPosY(1);
+        dr.setType("type1");
 
-        DiagramResource dr2 = new DiagramResource();
+        DiagramResourceDTO dr2 = new DiagramResourceDTO();
         dr2.setName("testDiagramResource2");
-        dr2.setResourceCatalog(rc2);
+        dr2.setResourceCatalogID("0ab01ee0-8211-11ed-a1eb-0242ac120002");
+        dr2.setPosX(1);
+        dr2.setPosY(1);
+        dr2.setType("type2");
+
         //Create Diagram
         final String uuid = given().body(d)
                 .contentType(ContentType.JSON)
@@ -135,15 +142,14 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", emptyCollectionOf(Set.class))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", emptyCollectionOf(Set.class))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Create DiagramResource
         final String drUuid = given().body(dr)
                 .contentType(ContentType.JSON)
                 .when().post("/diagrams/{diagramId}/resources", uuid).getBody().as(DiagramResource.class).getUuid();
-
 
         //Get DiagramResource by Id
         DiagramResource diagramResource = given().body(dr)
@@ -179,8 +185,8 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", iterableWithSize(2))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", iterableWithSize(2))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Get all DiagramResources
@@ -225,17 +231,25 @@ public class DataServiceTest {
 
      @Test
      public void testDeleteDiagramWithMultipleLines() throws JsonProcessingException {
-         ResourceCatalog rc1 = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
-         ResourceCatalog rc2 = new ResourceCatalog("0ab01ee0-8211-11ed-a1eb-0242ac120002", "ResourceCatalog2", "");
+         ResourceCatalog rc1 = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "Service", "f54012e8-8311-11ed-a1eb-0242ac120002");
+         ResourceCatalog rc2 = new ResourceCatalog("0ab01ee0-8211-11ed-a1eb-0242ac120002", "POD", "3cfea982-7ec6-11ed-a1eb-0242ac120002");
          Diagram d = new Diagram();
          d.setName("testDiagram");
 
-         DiagramResource dr = new DiagramResource();
+         DiagramResourceDTO dr = new DiagramResourceDTO();
          dr.setName("testDiagramResource");
-         dr.setResourceCatalog(rc1);
-         DiagramResource dr2 = new DiagramResource();
+         dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+         dr.setPosX(1);
+         dr.setPosY(1);
+         dr.setType("type1");
+
+         DiagramResourceDTO dr2 = new DiagramResourceDTO();
          dr2.setName("testDiagramResource2");
-         dr2.setResourceCatalog(rc2);
+         dr2.setResourceCatalogID("0ab01ee0-8211-11ed-a1eb-0242ac120002");
+         dr2.setPosX(1);
+         dr2.setPosY(1);
+         dr2.setType("type1");
+
          //Create Diagram
          Diagram diagram = given().body(d)
                  .contentType(ContentType.JSON)
@@ -249,8 +263,8 @@ public class DataServiceTest {
                  .then()
                  .statusCode(200)
                  .body("name", is("testDiagram"))
-                 .body("resources", nullValue())
-                 .body("lines", nullValue())
+                 .body("resources", emptyCollectionOf(Set.class))
+                 .body("lines", emptyCollectionOf(Set.class))
                  .body("uuid", equalTo(uuid));
 
          //Create DiagramResource
@@ -302,8 +316,8 @@ public class DataServiceTest {
                  .then()
                  .statusCode(200)
                  .body("name", is("testDiagram"))
-                 .body("resourcesID", iterableWithSize(2))
-                 .body("linesID", emptyCollectionOf(Set.class))
+                 .body("resources", iterableWithSize(2))
+                 .body("lines", emptyCollectionOf(Set.class))
                  .body("uuid", equalTo(uuid));
 
          //Get all DiagramResources
@@ -323,12 +337,12 @@ public class DataServiceTest {
          Assertions.assertEquals("Inherit Labels", lineCatalog.getName());
          Assertions.assertEquals(1, lineCatalog.getRules().size());
 
-         Line line = new Line();
-         line.setDestination(diagramResource);
-         line.setSource(diagramResource2);
-         line.setLineCatalog(lineCatalog);
+         LineDTO line = new LineDTO();
+         line.setDestination(diagramResource.getUuid());
+         line.setSource(diagramResource2.getUuid());
+         line.setLineCatalogID(lcuuid);
 
-         //Create another DiagramResource
+         //Create another Line
          final String lineUuid = given().body(line)
                  .contentType(ContentType.JSON)
                  .when().post("/diagrams/{diagramId}/lines", uuid).getBody().as(Line.class).getUuid();
@@ -360,8 +374,8 @@ public class DataServiceTest {
                  .then()
                  .statusCode(200)
                  .body("name", is("testDiagram"))
-                 .body("resourcesID", iterableWithSize(2))
-                 .body("linesID", iterableWithSize(1))
+                 .body("resources", iterableWithSize(2))
+                 .body("lines", iterableWithSize(1))
                  .body("uuid", equalTo(uuid));
 
          //Delete Diagram
@@ -405,14 +419,18 @@ public class DataServiceTest {
      }
 
     @Test
-    public void testDeleteDiagramResources() throws JsonProcessingException {
-        ResourceCatalog rc = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
+    public void testDeleteDiagramResources() {
+        ResourceCatalog rc = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "Service", "f54012e8-8311-11ed-a1eb-0242ac120002");
         Diagram d = new Diagram();
         d.setName("testDiagram");
 
-        DiagramResource dr = new DiagramResource();
+        DiagramResourceDTO dr = new DiagramResourceDTO();
         dr.setName("testDiagramResource");
-        dr.setResourceCatalog(rc);
+        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setPosX(1);
+        dr.setPosY(1);
+        dr.setType("type1");
+
         //Create Diagram
         final String uuid = given().body(d)
                 .contentType(ContentType.JSON)
@@ -425,8 +443,8 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", emptyCollectionOf(Set.class))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", emptyCollectionOf(Set.class))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Create DiagramResource
@@ -452,8 +470,8 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", iterableWithSize(1))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", iterableWithSize(1))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Delete DiagramResource
@@ -470,8 +488,8 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", emptyCollectionOf(Set.class))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", emptyCollectionOf(Set.class))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Get DiagramResource by Id
@@ -500,13 +518,15 @@ public class DataServiceTest {
 
     @Test
     public void testUpdateDefinition() {
-        ResourceCatalog rc = new ResourceCatalog("387585aa-8382-11ed-a1eb-0242ac120002", "ResourceCatalog1", "");
         Diagram d = new Diagram();
         d.setName("testDiagram");
 
-        DiagramResource dr = new DiagramResource();
+        DiagramResourceDTO dr = new DiagramResourceDTO();
         dr.setName("testDiagramResource");
-        dr.setResourceCatalog(rc);
+        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setPosX(1);
+        dr.setPosY(1);
+        dr.setType("type1");
 
         //Create Diagram
         final String uuid = given().body(d)
@@ -520,8 +540,8 @@ public class DataServiceTest {
                 .then()
                 .statusCode(200)
                 .body("name", is("testDiagram"))
-                .body("resourcesID", emptyCollectionOf(Set.class))
-                .body("linesID", emptyCollectionOf(Set.class))
+                .body("resources", emptyCollectionOf(Set.class))
+                .body("lines", emptyCollectionOf(Set.class))
                 .body("uuid", equalTo(uuid));
 
         //Create DiagramResource

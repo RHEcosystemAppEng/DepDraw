@@ -20,7 +20,7 @@ public class Diagram {
 
     private String name;
 
-    private Set<DiagramResource> resourcesID = Set.of();
+    private Set<DiagramResource> resources = Set.of();
 
-    private Set<Line> linesID = Set.of();
+    private Set<Line> lines = Set.of();
 }

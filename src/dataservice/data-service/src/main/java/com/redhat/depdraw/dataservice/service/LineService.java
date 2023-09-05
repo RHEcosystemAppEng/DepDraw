@@ -1,31 +1,39 @@
 package com.redhat.depdraw.dataservice.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.redhat.depdraw.dataservice.dao.api.LineDao;
 import com.redhat.depdraw.model.Diagram;
+import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.Line;
+import com.redhat.depdraw.model.LineCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class LineService {
+    @Inject
+    DiagramService diagramService;
+
+    @Inject
+    LineCatalogService lineCatalogService;
+
+    @Inject
+    DiagramResourceService diagramResourceService;
 
     @Inject
     LineDao lineDao;
 
-    @Inject
-    DiagramService diagramService;
 
-    public Line createLine(String diagramId, Line line) {
-        UUID uuid = UUID.randomUUID();
-        line.setUuid(uuid.toString());
+    public Line createLine(String diagramId, String lineCatalogID, String source, String destination) {
+        LineCatalog lc = lineCatalogService.getLineCatalogById(lineCatalogID);
+        DiagramResource drSource = diagramResourceService.getDiagramResourceById(diagramId, source);
+        DiagramResource drDest = diagramResourceService.getDiagramResourceById(diagramId, destination);
 
-        final Line createdLine = lineDao.create(diagramId, line);
+        final Line createdLine = lineDao.create(diagramId, lc, drSource, drDest);
 
         final Diagram diagram = diagramService.getDiagramById(diagramId);
-        diagram.getLinesID().add(createdLine);
+        diagram.getLines().add(createdLine);
 
         diagramService.updateDiagram(diagram);
 
@@ -43,7 +51,7 @@ public class LineService {
             lineDao.deleteLineById(diagramId, lineId);
             final Diagram diagram = diagramService.getDiagramById(diagramId);
             if(diagram != null){
-                diagram.getLinesID().remove(line);
+                diagram.getLines().remove(line);
             }
 
             diagramService.updateDiagram(diagram);
