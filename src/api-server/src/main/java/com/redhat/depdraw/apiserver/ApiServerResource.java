@@ -20,13 +20,4 @@ public class ApiServerResource {
     public Response health() {
         return Response.ok().build();
     }
-
-    @GET
-    @Path("/api/{diagramId}/lines")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response transformDiagramLines(@PathParam("diagramId") String diagramId) {
-
-
-        return Response.ok().build();
-    }
 }

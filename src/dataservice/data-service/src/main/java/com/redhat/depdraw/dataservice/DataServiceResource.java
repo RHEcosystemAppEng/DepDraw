@@ -44,6 +44,8 @@ public class DataServiceResource {
 
     @POST
     @Path("/diagrams")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createDiagram(Diagram diagram) {
         final Diagram createdDiagram = diagramService.createDiagram(diagram);
 

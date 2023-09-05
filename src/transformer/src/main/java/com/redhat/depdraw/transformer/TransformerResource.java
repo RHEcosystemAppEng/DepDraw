@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.redhat.com.depdraw.rest.client.DataServiceClient;
+import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.Line;
 import com.redhat.depdraw.model.LineCatalog;
 import jakarta.inject.Inject;
@@ -42,11 +43,12 @@ public class TransformerResource {
     public Response transformDiagramLines(@PathParam("diagramId") String diagramId) {
         List<Line> lines = dataServiceClient.getLinesByDigramId(diagramId);
         for (Line l : lines) {
-            String sourceId = l.getSource();
-            String destinationId = l.getDestination();
+            DiagramResource drSource = l.getSource();
+            DiagramResource drDestination = l.getDestination();
 
             LineCatalog lineCatalog = dataServiceClient.getLineCatalogById(l.getLineCatalog().getUuid());
-            String srcDefinition = dataServiceClient.getDefinition(diagramId, sourceId);
+            String srcDefinition = dataServiceClient.getDefinition(diagramId, drSource.getUuid());
+            String destinationId = drDestination.getUuid();
             String destDefinition = dataServiceClient.getDefinition(diagramId, destinationId);
             try {
                 JsonNode srcJsonNode = objectMapper.readTree(srcDefinition);
