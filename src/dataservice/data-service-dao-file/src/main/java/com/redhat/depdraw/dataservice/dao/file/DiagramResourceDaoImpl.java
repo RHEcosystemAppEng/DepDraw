@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -28,6 +29,11 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
     @Override
     public DiagramResource create(String diagramId, String name, ResourceCatalog rc, String type, int posX, int posY) {
         String uuid = UUID.randomUUID().toString();
+
+        return createInternal(diagramId, uuid, name, rc, type, posX, posY, StandardOpenOption.CREATE_NEW);
+    }
+
+    private DiagramResource createInternal(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY, OpenOption... openOptions) {
         DiagramResource dr = new DiagramResource(uuid, name, rc, type, new Point(posX, posY));
 
         try {
@@ -40,12 +46,12 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
             Path fileName = Path.of(pathString + FileUtil.DIAGRAM_RESOURCE_FILE_NAME);
 
             // Writing into the DiagramResource file
-            Files.writeString(fileName, s, StandardOpenOption.CREATE_NEW);
+            Files.writeString(fileName, s, openOptions);
 
             fileName = Path.of(pathString + FileUtil.DIAGRAM_RESOURCE_DEFINITION_FILE_NAME);
 
             // Writing into the DiagramResourceDefinition file
-            Files.writeString(fileName, "", StandardOpenOption.CREATE_NEW);
+            Files.writeString(fileName, "", openOptions);
         } catch (IOException e) {
             return dr;
         }
@@ -108,6 +114,11 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
             System.out.println("error" + "\n"  + "\n" + diagramId + "\n" + diagramResourceId);
             return null;
         }
+    }
+
+    @Override
+    public DiagramResource updateDiagramResource(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY) {
+        return createInternal(diagramId, uuid, name, rc, type, posX, posY, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
 }

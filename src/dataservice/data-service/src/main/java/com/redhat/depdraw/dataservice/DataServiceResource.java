@@ -154,6 +154,16 @@ public class DataServiceResource {
         return Response.ok(createdDiagramResource).build();
     }
 
+    @PUT
+    @Path("/diagrams/{diagramId}/resources/{diagramResourceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateDiagramResource(@PathParam("diagramId") String diagramId, @PathParam("diagramResourceId") String diagramResourceId, DiagramResourceDTO dto) {
+        final DiagramResource createdDiagramResource = diagramResourceService.updateDiagramResource(diagramId, diagramResourceId, dto.getName(), dto.getResourceCatalogID(), dto.getType(), dto.getPosX(), dto.getPosY());
+
+        return Response.ok(createdDiagramResource).build();
+    }
+
     @GET
     @Path("/diagrams/{diagramId}/resources/{diagramResourceId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -237,6 +247,13 @@ public class DataServiceResource {
         final String k8sResourceSchema = k8sResourceSchemaService.getK8sResourceSchemaById(k8sResourceschemaId);
 
         return Response.ok(k8sResourceSchema).build();
+    }
+
+    @GET@Path("/resourcecatalogs/")
+    public Response getResourceCatalogs() {
+        List<ResourceCatalog> resourceCatalogs = resourceCatalogService.getResourceCatalogs();
+
+        return Response.ok(resourceCatalogs).build();
     }
 
     @GET

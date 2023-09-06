@@ -8,11 +8,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "uuid")
-@EqualsAndHashCode(exclude = "uuid")
+@ToString
+@EqualsAndHashCode
 public class DiagramDTO {
-    private String uuid;
-
     private String name;
 
     private Set<String> resourcesID = Set.of();

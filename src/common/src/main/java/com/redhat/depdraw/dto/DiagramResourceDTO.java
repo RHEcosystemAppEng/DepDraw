@@ -6,11 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "uuid")
-@EqualsAndHashCode(exclude = "uuid")
+@ToString
+@EqualsAndHashCode
 public class DiagramResourceDTO {
-    private String uuid;
-
     private String name;
 
     private String resourceCatalogID;

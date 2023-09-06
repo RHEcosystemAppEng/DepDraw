@@ -7,11 +7,9 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude = "uuid")
-@EqualsAndHashCode(exclude = "uuid")
+@ToString
+@EqualsAndHashCode
 public class LineDTO {
-    private String uuid;
-
     private String lineCatalogID;
 
     private String source;

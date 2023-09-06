@@ -33,6 +33,21 @@ public class DiagramResourceService {
         return createdDiagramResource;
     }
 
+    public DiagramResource updateDiagramResource(String diagramId, String uuid, String name, String resourceCatalogID, String type, int posX, int posY) {
+        DiagramResource originalDr = getDiagramResourceById(diagramId, uuid);
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
+        final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(resourceCatalogID);
+
+        final DiagramResource diagramResource = diagramResourceDao.updateDiagramResource(diagramId, uuid, name, rc, type, posX, posY);
+
+        diagram.getResources().remove(originalDr);
+        diagram.getResources().add(diagramResource);
+
+        diagramService.updateDiagram(diagram);
+
+        return diagramResource;
+    }
+
     public DiagramResource getDiagramResourceById(String diagramId, String diagramResourceId) {
         return diagramResourceDao.getDiagramResourceById(diagramId, diagramResourceId);
     }

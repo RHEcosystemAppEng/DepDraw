@@ -18,4 +18,5 @@ public interface DiagramResourceDao {
 
     String getDefinition(String diagramId, String diagramResourceId);
 
+    DiagramResource updateDiagramResource(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY);
 }
