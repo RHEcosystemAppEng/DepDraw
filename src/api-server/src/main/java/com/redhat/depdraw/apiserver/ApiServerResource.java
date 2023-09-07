@@ -1,13 +1,18 @@
 package com.redhat.depdraw.apiserver;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import com.redhat.com.depdraw.rest.client.DataServiceClient;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/")
 public class ApiServerResource {
+
+    @Inject
+    @RestClient
+    DataServiceClient dataServiceClient;
 
     @GET
     @Path("/health")

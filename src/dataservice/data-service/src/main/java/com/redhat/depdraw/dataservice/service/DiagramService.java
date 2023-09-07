@@ -1,7 +1,6 @@
 package com.redhat.depdraw.dataservice.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.model.Diagram;
@@ -15,9 +14,6 @@ public class DiagramService {
     DiagramDao diagramDao;
 
     public Diagram createDiagram(Diagram diagram){
-        final UUID uuid = UUID.randomUUID();
-        diagram.setUuid(uuid.toString());
-
         return diagramDao.create(diagram);
     }
 

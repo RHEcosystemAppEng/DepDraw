@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>dataservice</artifactId>
     <groupId>com.redhat.depdraw</groupId>
-    <relativePath>../pom.xml</relativePath>
+    <artifactId>dataservice</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>data-service-dao-api</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-
   <dependencies>
     <dependency>
       <groupId>com.redhat.depdraw</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
   </dependencies>
 </project>

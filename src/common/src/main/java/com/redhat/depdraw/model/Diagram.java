@@ -1,5 +1,6 @@
 package com.redhat.depdraw.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class Diagram {
 
     private String name;
 
-    private Set<String> resourcesID = Set.of();
+    private Set<DiagramResource> resources = new HashSet<>();
 
-    private Set<String> linesID = Set.of();
+    private Set<Line> lines = new HashSet<>();
 }

@@ -1,18 +1,22 @@
 package com.redhat.depdraw.dataservice.dao.file;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
 import com.redhat.depdraw.model.DiagramResource;
+import com.redhat.depdraw.model.ResourceCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -23,10 +27,18 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
     ObjectMapper objectMapper;
 
     @Override
-    public DiagramResource create(DiagramResource dr) {
+    public DiagramResource create(String diagramId, String name, ResourceCatalog rc, String type, int posX, int posY) {
+        String uuid = UUID.randomUUID().toString();
+
+        return createInternal(diagramId, uuid, name, rc, type, posX, posY, StandardOpenOption.CREATE_NEW);
+    }
+
+    private DiagramResource createInternal(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY, OpenOption... openOptions) {
+        DiagramResource dr = new DiagramResource(uuid, name, rc, type, new Point(posX, posY));
+
         try {
             final String s = objectMapper.writeValueAsString(dr);
-            final String pathString = FileUtil.DIAGRAM_FILES_DIR + dr.getDiagramID() + "/" + FileUtil.DIAGRAM_RESOURCES_FILES_DIR + dr.getUuid() + "/";
+            final String pathString = FileUtil.DIAGRAM_FILES_DIR + diagramId + "/" + FileUtil.DIAGRAM_RESOURCES_FILES_DIR + dr.getUuid() + "/";
             Path path = Path.of(pathString);
 
             Files.createDirectories(path);
@@ -34,12 +46,12 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
             Path fileName = Path.of(pathString + FileUtil.DIAGRAM_RESOURCE_FILE_NAME);
 
             // Writing into the DiagramResource file
-            Files.writeString(fileName, s, StandardOpenOption.CREATE_NEW);
+            Files.writeString(fileName, s, openOptions);
 
             fileName = Path.of(pathString + FileUtil.DIAGRAM_RESOURCE_DEFINITION_FILE_NAME);
 
             // Writing into the DiagramResourceDefinition file
-            Files.writeString(fileName, "", StandardOpenOption.CREATE_NEW);
+            Files.writeString(fileName, "", openOptions);
         } catch (IOException e) {
             return dr;
         }
@@ -102,6 +114,11 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
             System.out.println("error" + "\n"  + "\n" + diagramId + "\n" + diagramResourceId);
             return null;
         }
+    }
+
+    @Override
+    public DiagramResource updateDiagramResource(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY) {
+        return createInternal(diagramId, uuid, name, rc, type, posX, posY, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
 }

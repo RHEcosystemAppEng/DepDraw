@@ -1,10 +1,11 @@
 package com.redhat.depdraw;
 
+import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.Line;
 import com.redhat.depdraw.model.LineCatalog;
-import com.redhat.depdraw.transformer.DataServiceClient;
+import com.redhat.com.depdraw.rest.client.DataServiceClient;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.InjectMock;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,9 +34,15 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithLabels() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_LABELS));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.INHERIT_LABELS)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                         "  \"kind\": \"Pod\",\n" +
@@ -89,9 +96,16 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithDestExistingLabels() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_LABELS));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.INHERIT_LABELS)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                 "  \"kind\": \"Pod\",\n" +
@@ -148,9 +162,16 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithAnnotations() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_ANNOTATIONS));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.INHERIT_ANNOTATIONS)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                 "  \"kind\": \"Pod\",\n" +
@@ -204,9 +225,15 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithDestExistingAnnotations() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_ANNOTATIONS));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.INHERIT_ANNOTATIONS)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                 "  \"kind\": \"Pod\",\n" +
@@ -263,9 +290,16 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithMetadata() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_METADATA));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.INHERIT_METADATA)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                 "  \"kind\": \"Pod\",\n" +
@@ -323,9 +357,16 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithDestExistingMetadata() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_METADATA));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.INHERIT_METADATA)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                 "  \"kind\": \"Pod\",\n" +
@@ -389,9 +430,16 @@ public class TransformerResourceTest {
 
     @Test
     public void testTransformDiagramLinesWithSelector() {
-        List<Line> lines = List.of(new Line("uuid", "diagramID", "lineCatalogID", "1", "2"));
+        DiagramResource dr = new DiagramResource();
+        dr.setUuid("1");
+
+        DiagramResource dr2 = new DiagramResource();
+        dr2.setUuid("2");
+
+        LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.SELECT_RESOURCE));
+        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
-        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(new LineCatalog("uuid","lineCatalog1", Set.of(LineCatalog.SELECT_RESOURCE)));
+        Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
                 "  \"apiVersion\": \"v1\",\n" +
                 "  \"kind\": \"Pod\",\n" +

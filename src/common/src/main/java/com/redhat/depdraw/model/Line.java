@@ -16,11 +16,9 @@ import lombok.ToString;
 public class Line {
     private String uuid;
 
-    private String diagramID;
+    private LineCatalog lineCatalog;
 
-    private String lineCatalogID;
+    private DiagramResource source;
 
-    private String source;
-
-    private String destination;
+    private DiagramResource destination;
 }

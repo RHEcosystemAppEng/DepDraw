@@ -1,32 +1,39 @@
 package com.redhat.depdraw.dataservice.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.redhat.depdraw.dataservice.dao.api.LineDao;
 import com.redhat.depdraw.model.Diagram;
+import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.Line;
+import com.redhat.depdraw.model.LineCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class LineService {
+    @Inject
+    DiagramService diagramService;
+
+    @Inject
+    LineCatalogService lineCatalogService;
+
+    @Inject
+    DiagramResourceService diagramResourceService;
 
     @Inject
     LineDao lineDao;
 
-    @Inject
-    DiagramService diagramService;
 
-    public Line createLine(String diagramId, Line line) {
-        UUID uuid = UUID.randomUUID();
-        line.setUuid(uuid.toString());
-        line.setDiagramID(diagramId);
+    public Line createLine(String diagramId, String lineCatalogID, String source, String destination) {
+        LineCatalog lc = lineCatalogService.getLineCatalogById(lineCatalogID);
+        DiagramResource drSource = diagramResourceService.getDiagramResourceById(diagramId, source);
+        DiagramResource drDest = diagramResourceService.getDiagramResourceById(diagramId, destination);
 
-        final Line createdLine = lineDao.create(line);
+        final Line createdLine = lineDao.create(diagramId, lc, drSource, drDest);
 
-        final Diagram diagram = diagramService.getDiagramById(line.getDiagramID());
-        diagram.getLinesID().add(line.getUuid());
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
+        diagram.getLines().add(createdLine);
 
         diagramService.updateDiagram(diagram);
 
@@ -42,9 +49,9 @@ public class LineService {
 
         if(line != null) {
             lineDao.deleteLineById(diagramId, lineId);
-            final Diagram diagram = diagramService.getDiagramById(line.getDiagramID());
+            final Diagram diagram = diagramService.getDiagramById(diagramId);
             if(diagram != null){
-                diagram.getLinesID().remove(lineId);
+                diagram.getLines().remove(line);
             }
 
             diagramService.updateDiagram(diagram);

@@ -7,13 +7,16 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.depdraw.dataservice.dao.api.LineDao;
+import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.Line;
+import com.redhat.depdraw.model.LineCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -24,10 +27,13 @@ public class LineDaoImpl implements LineDao {
     ObjectMapper objectMapper;
 
     @Override
-    public Line create(Line l) {
+    public Line create(String diagramId, LineCatalog lineCatalog, DiagramResource source, DiagramResource destination) {
+        String uuid = UUID.randomUUID().toString();
+        Line l = new Line(uuid, lineCatalog, source, destination);
+
         try {
             final String s = objectMapper.writeValueAsString(l);
-            final String pathString = FileUtil.DIAGRAM_FILES_DIR + l.getDiagramID() + "/" + FileUtil.LINE_FILES_DIR + l.getUuid() + "/";
+            final String pathString = FileUtil.DIAGRAM_FILES_DIR + diagramId + "/" + FileUtil.LINE_FILES_DIR + l.getUuid() + "/";
             Path path = Path.of(pathString);
 
             Files.createDirectories(path);

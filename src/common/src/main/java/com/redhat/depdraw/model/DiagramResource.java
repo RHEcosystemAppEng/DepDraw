@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.awt.*;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,7 +20,9 @@ public class DiagramResource {
 
     private String name;
 
-    private String resourceCatalogID;
+    private ResourceCatalog resourceCatalog;
 
-    private String diagramID;
+    private String type;
+
+    private Point position;
 }
