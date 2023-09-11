@@ -5,7 +5,7 @@ import java.util.List;
 import com.redhat.depdraw.model.Diagram;
 
 public interface DiagramDao {
-    Diagram create(Diagram d);
+    Diagram create(String name);
 
     Diagram getDiagramById(String diagramId);
 

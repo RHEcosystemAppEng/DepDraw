@@ -2,6 +2,7 @@ package com.redhat.depdraw.dataservice.service;
 
 import java.util.List;
 
+import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
 import com.redhat.depdraw.model.Diagram;
 import com.redhat.depdraw.model.DiagramResource;
@@ -19,6 +20,9 @@ public class DiagramResourceService {
     DiagramService diagramService;
 
     @Inject
+    DiagramDao diagramDao;
+
+    @Inject
     ResourceCatalogService resourceCatalogService;
 
     public DiagramResource createDiagramResource(String diagramId, String name, String resourceCatalogID, String type, int posX, int posY) {
@@ -28,7 +32,7 @@ public class DiagramResourceService {
 
         diagram.getResources().add(createdDiagramResource);
 
-        diagramService.updateDiagram(diagram);
+        diagramDao.updateDiagram(diagram);
 
         return createdDiagramResource;
     }
@@ -43,7 +47,7 @@ public class DiagramResourceService {
         diagram.getResources().remove(originalDr);
         diagram.getResources().add(diagramResource);
 
-        diagramService.updateDiagram(diagram);
+        diagramDao.updateDiagram(diagram);
 
         return diagramResource;
     }
@@ -59,7 +63,7 @@ public class DiagramResourceService {
         final Diagram diagram = diagramService.getDiagramById(diagramId);
         diagram.getResources().remove(diagramResource);
 
-        diagramService.updateDiagram(diagram);
+        diagramDao.updateDiagram(diagram);
     }
 
     public List<DiagramResource> getDiagramResources(String diagramId) {

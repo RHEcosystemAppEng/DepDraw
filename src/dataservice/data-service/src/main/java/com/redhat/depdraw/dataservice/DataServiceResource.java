@@ -2,6 +2,7 @@ package com.redhat.depdraw.dataservice;
 
 import java.util.List;
 
+import com.redhat.depdraw.dto.DiagramDTO;
 import com.redhat.depdraw.dto.DiagramResourceDTO;
 import com.redhat.depdraw.dto.LineDTO;
 import jakarta.inject.Inject;
@@ -48,8 +49,8 @@ public class DataServiceResource {
     @Path("/diagrams")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createDiagram(Diagram diagram) {
-        final Diagram createdDiagram = diagramService.createDiagram(diagram);
+    public Response createDiagram(DiagramDTO diagram) {
+        final Diagram createdDiagram = diagramService.createDiagram(diagram.getName());
 
         return Response.ok(createdDiagram).build();
     }

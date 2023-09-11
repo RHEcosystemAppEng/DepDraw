@@ -1,9 +1,13 @@
 package com.redhat.depdraw.dataservice.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.model.Diagram;
+import com.redhat.depdraw.model.DiagramResource;
+import com.redhat.depdraw.model.Line;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -11,10 +15,16 @@ import jakarta.inject.Inject;
 public class DiagramService {
 
     @Inject
+    DiagramResourceService diagramResourceService;
+
+    @Inject
+    LineService lineService;
+
+    @Inject
     DiagramDao diagramDao;
 
-    public Diagram createDiagram(Diagram diagram){
-        return diagramDao.create(diagram);
+    public Diagram createDiagram(String name){
+        return diagramDao.create(name);
     }
 
     public Diagram getDiagramById(String diagramId) {
@@ -33,7 +43,14 @@ public class DiagramService {
         return diagramDao.getDiagrams();
     }
 
-    public Diagram updateDiagram(Diagram diagram) {
-        return diagramDao.updateDiagram(diagram);
+    public Diagram updateDiagram(String uuid, String name, Set<String> resourcesID, Set<String> linesID) {
+        Set<DiagramResource> resourceSet = resourcesID.stream()
+                .map(dr -> diagramResourceService.getDiagramResourceById(uuid, dr)).collect(Collectors.toSet());
+        Set<Line> lineSet = linesID.stream()
+                .map(l -> lineService.getLineById(uuid, l)).collect(Collectors.toSet());
+
+        Diagram d = new Diagram(uuid, name, resourceSet, lineSet);
+
+        return diagramDao.updateDiagram(d);
     }
 }
