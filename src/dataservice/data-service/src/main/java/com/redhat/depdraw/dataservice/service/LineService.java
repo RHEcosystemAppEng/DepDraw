@@ -2,6 +2,7 @@ package com.redhat.depdraw.dataservice.service;
 
 import java.util.List;
 
+import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.dataservice.dao.api.LineDao;
 import com.redhat.depdraw.model.Diagram;
 import com.redhat.depdraw.model.DiagramResource;
@@ -24,6 +25,9 @@ public class LineService {
     @Inject
     LineDao lineDao;
 
+    @Inject
+    DiagramDao diagramDao;
+
 
     public Line createLine(String diagramId, String lineCatalogID, String source, String destination) {
         LineCatalog lc = lineCatalogService.getLineCatalogById(lineCatalogID);
@@ -35,7 +39,7 @@ public class LineService {
         final Diagram diagram = diagramService.getDiagramById(diagramId);
         diagram.getLines().add(createdLine);
 
-        diagramService.updateDiagram(diagram);
+        diagramDao.updateDiagram(diagram);
 
         return createdLine;
     }
@@ -54,7 +58,7 @@ public class LineService {
                 diagram.getLines().remove(line);
             }
 
-            diagramService.updateDiagram(diagram);
+            diagramDao.updateDiagram(diagram);
         }
     }
 

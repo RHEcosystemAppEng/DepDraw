@@ -26,9 +26,11 @@ public class DiagramDaoImpl implements DiagramDao {
     ObjectMapper objectMapper;
 
     @Override
-    public Diagram create(Diagram d) {
+    public Diagram create(String name) {
         final UUID uuid = UUID.randomUUID();
+        Diagram d = new Diagram();
         d.setUuid(uuid.toString());
+        d.setName(name);
 
         return createInternal(d, StandardOpenOption.CREATE_NEW);
     }
