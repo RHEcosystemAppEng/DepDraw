@@ -1,6 +1,5 @@
 package com.redhat.depdraw.dataservice.dao.file;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +15,6 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
 import com.redhat.depdraw.model.DiagramResource;
-import com.redhat.depdraw.model.ResourceCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -27,15 +25,14 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
     ObjectMapper objectMapper;
 
     @Override
-    public DiagramResource create(String diagramId, String name, ResourceCatalog rc, String type, int posX, int posY) {
+    public DiagramResource create(String diagramId, DiagramResource dr) {
         String uuid = UUID.randomUUID().toString();
+        dr.setUuid(uuid);
 
-        return createInternal(diagramId, uuid, name, rc, type, posX, posY, StandardOpenOption.CREATE_NEW);
+        return createInternal(diagramId, dr, StandardOpenOption.CREATE_NEW);
     }
 
-    private DiagramResource createInternal(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY, OpenOption... openOptions) {
-        DiagramResource dr = new DiagramResource(uuid, name, rc, type, new Point(posX, posY));
-
+    private DiagramResource createInternal(String diagramId, DiagramResource dr, OpenOption... openOptions) {
         try {
             final String s = objectMapper.writeValueAsString(dr);
             final String pathString = FileUtil.DIAGRAM_FILES_DIR + diagramId + "/" + FileUtil.DIAGRAM_RESOURCES_FILES_DIR + dr.getUuid() + "/";
@@ -117,8 +114,8 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
     }
 
     @Override
-    public DiagramResource updateDiagramResource(String diagramId, String uuid, String name, ResourceCatalog rc, String type, int posX, int posY) {
-        return createInternal(diagramId, uuid, name, rc, type, posX, posY, StandardOpenOption.TRUNCATE_EXISTING);
+    public DiagramResource updateDiagramResource(String diagramId, DiagramResource dr) {
+        return createInternal(diagramId, dr, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
 }
