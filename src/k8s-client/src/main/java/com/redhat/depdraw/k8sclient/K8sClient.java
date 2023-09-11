@@ -1,16 +1,12 @@
 package com.redhat.depdraw.k8sclient;
 
-
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.json.JsonObject;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import jakarta.ws.rs.*;
 import java.io.*;
-import io.fabric8.kubernetes.client.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,37 +15,21 @@ import java.nio.charset.Charset;
 
 @Path("/")
 public class K8sClient {
-    @Inject
-    KubernetesClient kubernetesClient;
 
     @GET
     @Path("/get-resource")
-    public Response GetResources(@QueryParam("args") String args,@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("project") String project) {
+    public Response GetResources(@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("project") String project) {
 
-        String command = "oc";
-        String[] ARGS = new String[8];
-        ARGS[0] = command;
-        ARGS[1] = "get";
-        ARGS[2] = kind;
-        ARGS[3] = name;
-        ARGS[4] = "-n";
-        ARGS[5] = project;
-        ARGS[6] = "-o";
-        ARGS[7] = "json";
+        String[] args = {"oc", "get", kind, name, "-n", project, "-o", "json"};
 
         try {
-            String output = executeCommand(ARGS);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonObject jsonObject = JsonObject.mapFrom(objectMapper.readTree(output));
-//            String prettyStatus = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject).replace("\\\n", '');
+            String output = executeCommand(args);
 
             return Response.ok(output).build();
         } catch (IOException | InterruptedException ex) {
             return Response.serverError().entity("Error executing command: " + ex.getMessage()).build();
         }
     }
-
-
 
     @POST
     @Path("/update-resource")
@@ -90,23 +70,14 @@ public class K8sClient {
         }
     }
 
-
     @GET
     @Path("/get-status")
-    public Response GetStatus(@QueryParam("args") String args,@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("project") String project) {
+    public Response GetStatus(@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("project") String project) {
 
-        String command = "oc";
-        String[] ARGS = new String[8];
-        ARGS[0] = command;
-        ARGS[1] = "get";
-        ARGS[2] = kind;
-        ARGS[3] = name;
-        ARGS[4] = "-n";
-        ARGS[5] = project;
-        ARGS[6] = "-o";
-        ARGS[7] = "json";
+        String[] args = {"oc", "get", kind, name, "-n", project, "-o", "json"};
+
         try {
-            String output = executeCommand(ARGS);
+            String output = executeCommand(args);
 
             // Use ObjectMapper to parse the JSON string into a JsonNode object
             ObjectMapper objectMapper = new ObjectMapper();
@@ -117,7 +88,6 @@ public class K8sClient {
             return Response.serverError().entity("Error executing command: " + ex.getMessage()).build();
         }
     }
-
 
     @GET
     @Path("/health")
@@ -134,7 +104,6 @@ public class K8sClient {
         Process process = builder.start();
         try (InputStream inputStream = process.getInputStream()) {
             String output = readInputStream(inputStream);
-//            output = output.replaceAll("\\\\n", "\n"); // Replace "\n" with actual new line
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 throw new IOException("Command exited with non-zero exit code: " + exitCode);
