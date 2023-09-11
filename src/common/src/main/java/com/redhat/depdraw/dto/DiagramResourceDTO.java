@@ -18,4 +18,8 @@ public class DiagramResourceDTO {
     private int posX;
 
     private int posY;
+
+    private int width;
+
+    private int height;
 }
