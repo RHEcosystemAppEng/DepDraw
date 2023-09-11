@@ -18,6 +18,7 @@
     <module>transformer</module>
     <module>dataservice</module>
     <module>api-server</module>
+    <module>k8s-client</module>
   </modules>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
