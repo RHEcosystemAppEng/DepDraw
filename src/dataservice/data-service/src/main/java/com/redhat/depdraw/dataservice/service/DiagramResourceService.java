@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
+import com.redhat.depdraw.dto.DiagramResourceDTO;
 import com.redhat.depdraw.model.Diagram;
 import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.ResourceCatalog;
@@ -26,10 +27,10 @@ public class DiagramResourceService {
     @Inject
     ResourceCatalogService resourceCatalogService;
 
-    public DiagramResource createDiagramResource(String diagramId, String name, String resourceCatalogID, String type, int posX, int posY) {
+    public DiagramResource createDiagramResource(String diagramId, DiagramResourceDTO drDTO) {
         final Diagram diagram = diagramService.getDiagramById(diagramId);
-        final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(resourceCatalogID);
-        DiagramResource dr = new DiagramResource("", name, rc, type, new Point(posX, posY));
+        final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(drDTO.getResourceCatalogID());
+        DiagramResource dr = new DiagramResource("", drDTO.getName(), rc, drDTO.getType(), new Point(drDTO.getPosX(), drDTO.getPosY()), drDTO.getWidth(), drDTO.getHeight());
         final DiagramResource createdDiagramResource = diagramResourceDao.create(diagramId, dr);
 
         diagram.getResources().add(createdDiagramResource);
@@ -39,19 +40,21 @@ public class DiagramResourceService {
         return createdDiagramResource;
     }
 
-    public DiagramResource updateDiagramResource(String diagramId, String uuid, String name, String resourceCatalogID, String type, int posX, int posY) {
-        DiagramResource originalDr = getDiagramResourceById(diagramId, uuid);
+    public DiagramResource updateDiagramResource(String diagramId, String diagramResourceId, DiagramResourceDTO dto) {
+        DiagramResource dr = getDiagramResourceById(diagramId, diagramResourceId);
         final Diagram diagram = diagramService.getDiagramById(diagramId);
-        final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(resourceCatalogID);
-        DiagramResource dr = diagramResourceDao.getDiagramResourceById(diagramId, uuid);
-        dr.setName(name);
-        dr.setResourceCatalog(rc);
-        dr.setType(type);
-        dr.setPosition(new Point(posX, posY));
+        final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(dto.getResourceCatalogID());
 
+        diagram.getResources().remove(dr);
+
+        dr.setName(dto.getName());
+        dr.setResourceCatalog(rc);
+        dr.setType(dto.getType());
+        dr.setPosition(new Point(dto.getPosX(), dto.getPosY()));
+        dr.setWidth(dto.getWidth());
+        dr.setHeight(dto.getHeight());
         final DiagramResource diagramResource = diagramResourceDao.updateDiagramResource(diagramId, dr);
 
-        diagram.getResources().remove(originalDr);
         diagram.getResources().add(diagramResource);
 
         diagramDao.updateDiagram(diagram);

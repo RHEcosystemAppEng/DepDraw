@@ -150,7 +150,7 @@ public class DataServiceResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDiagramResource(@PathParam("diagramId") String diagramId, DiagramResourceDTO dto) {
-        final DiagramResource createdDiagramResource = diagramResourceService.createDiagramResource(diagramId, dto.getName(), dto.getResourceCatalogID(), dto.getType(), dto.getPosX(), dto.getPosY());
+        final DiagramResource createdDiagramResource = diagramResourceService.createDiagramResource(diagramId, dto);
 
         return Response.ok(createdDiagramResource).build();
     }
@@ -160,7 +160,7 @@ public class DataServiceResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateDiagramResource(@PathParam("diagramId") String diagramId, @PathParam("diagramResourceId") String diagramResourceId, DiagramResourceDTO dto) {
-        final DiagramResource createdDiagramResource = diagramResourceService.updateDiagramResource(diagramId, diagramResourceId, dto.getName(), dto.getResourceCatalogID(), dto.getType(), dto.getPosX(), dto.getPosY());
+        final DiagramResource createdDiagramResource = diagramResourceService.updateDiagramResource(diagramId, diagramResourceId, dto);
 
         return Response.ok(createdDiagramResource).build();
     }

@@ -25,4 +25,8 @@ public class DiagramResource {
     private String type;
 
     private Point position;
+
+    private int width;
+
+    private int height;
 }
