@@ -1,7 +1,11 @@
-package com.redhat.depdraw.k8sclient;
+package com.redhat.depdraw.kubernetes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.vertx.core.json.JsonObject;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -10,17 +14,19 @@ import java.io.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-
 
 @Path("/")
-public class K8sClient {
+public class KubernetesResource {
+
+    @Inject
+    private KubernetesClient client;
 
     @GET
     @Path("/get-resource")
-    public Response GetResources(@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("project") String project) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getResources(@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("namespace") String namespace) {
 
-        String[] args = {"oc", "get", kind, name, "-n", project, "-o", "json"};
+        String[] args = {"oc", "get", kind, name, "-n", namespace, "-o", "json"};
 
         try {
             String output = executeCommand(args);
@@ -33,48 +39,25 @@ public class K8sClient {
 
     @POST
     @Path("/update-resource")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes("text/yaml")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateResource(InputStream requestBody) {
-        String command = "oc";
-        String[] ARGS = new String[] {command, "apply", "-f", "-"};
+    public Response updateResource(@QueryParam("kind") String kind, @QueryParam("apiVersion") String apiVersion, InputStream requestBody) {
+        Resource<GenericKubernetesResource> k8Resource = client.genericKubernetesResources(apiVersion, kind)
+                .load(requestBody);
 
-        try {
-            // Read the request body into a String
-            BufferedReader reader = new BufferedReader(new InputStreamReader(requestBody));
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            String resourceDefinition = stringBuilder.toString();
+        GenericKubernetesResource resource = client.genericKubernetesResources(apiVersion, kind)
+                .createOrReplace(k8Resource.item());
 
-            // Execute the oc create command with the resource definition passed as input
-            ProcessBuilder builder = new ProcessBuilder(ARGS);
-            builder.redirectErrorStream(true);
-            Process process = builder.start();
-            OutputStream outputStream = process.getOutputStream();
-            outputStream.write(resourceDefinition.getBytes());
-            outputStream.flush();
-            outputStream.close();
-
-            // Read the output of the command and return it as a response
-            InputStream inputStream = process.getInputStream();
-            String output = new String(inputStream.readAllBytes(), Charset.defaultCharset());
-            inputStream.close();
-
-            System.out.println(output);
-            return Response.ok(output).build();
-        } catch (IOException ex) {
-            return Response.serverError().entity("Error executing command: " + ex.getMessage()).build();
-        }
+            System.out.println(resource);
+            return Response.ok(resource).build();
     }
 
     @GET
     @Path("/get-status")
-    public Response GetStatus(@QueryParam("name") String name,@QueryParam("kind") String kind,@QueryParam("project") String project) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatus(@QueryParam("name") String name, @QueryParam("kind") String kind, @QueryParam("namespace") String namespace) {
 
-        String[] args = {"oc", "get", kind, name, "-n", project, "-o", "json"};
+        String[] args = {"oc", "get", kind, name, "-n", namespace, "-o", "json"};
 
         try {
             String output = executeCommand(args);
@@ -96,7 +79,6 @@ public class K8sClient {
         return Response.ok().build();
     }
 
-
     private String executeCommand(String[] command) throws IOException, InterruptedException {
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
@@ -108,10 +90,10 @@ public class K8sClient {
             if (exitCode != 0) {
                 throw new IOException("Command exited with non-zero exit code: " + exitCode);
             }
+
             return output;
         }
     }
-
 
     private String readInputStream(InputStream inputStream) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -121,8 +103,7 @@ public class K8sClient {
                 sb.append(line).append("\n");
             }
         }
+
         return sb.toString();
     }
-
-
 }

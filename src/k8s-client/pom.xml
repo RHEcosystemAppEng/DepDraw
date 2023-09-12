@@ -27,9 +27,9 @@
         <artifactId>quarkus-resteasy</artifactId>
       </dependency>
 
-<!--      <dependency>-->
-<!--        <groupId>io.quarkus</groupId>-->
-<!--        <artifactId>quarkus-kubernetes-client</artifactId>-->
-<!--      </dependency>-->
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-kubernetes-client</artifactId>
+      </dependency>
   </dependencies>
 </project>
