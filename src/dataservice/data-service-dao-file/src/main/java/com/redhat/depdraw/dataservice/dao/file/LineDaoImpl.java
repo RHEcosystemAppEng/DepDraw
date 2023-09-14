@@ -27,9 +27,9 @@ public class LineDaoImpl implements LineDao {
     ObjectMapper objectMapper;
 
     @Override
-    public Line create(String diagramId, LineCatalog lineCatalog, DiagramResource source, DiagramResource destination) {
+    public Line create(String diagramId, Line l) {
         String uuid = UUID.randomUUID().toString();
-        Line l = new Line(uuid, lineCatalog, source, destination);
+        l.setUuid(uuid);
 
         try {
             final String s = objectMapper.writeValueAsString(l);

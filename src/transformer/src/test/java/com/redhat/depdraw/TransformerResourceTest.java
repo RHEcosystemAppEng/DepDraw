@@ -40,7 +40,7 @@ public class TransformerResourceTest {
         DiagramResource dr2 = new DiagramResource();
         dr2.setUuid("2");
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_LABELS));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -103,7 +103,7 @@ public class TransformerResourceTest {
         dr2.setUuid("2");
 
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_LABELS));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -169,7 +169,7 @@ public class TransformerResourceTest {
         dr2.setUuid("2");
 
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_ANNOTATIONS));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -231,7 +231,7 @@ public class TransformerResourceTest {
         DiagramResource dr2 = new DiagramResource();
         dr2.setUuid("2");
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_ANNOTATIONS));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -297,7 +297,7 @@ public class TransformerResourceTest {
         dr2.setUuid("2");
 
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_METADATA));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -364,7 +364,7 @@ public class TransformerResourceTest {
         dr2.setUuid("2");
 
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.INHERIT_METADATA));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -437,7 +437,7 @@ public class TransformerResourceTest {
         dr2.setUuid("2");
 
         LineCatalog lineCatalog = new LineCatalog("uuid", "lineCatalog1", Set.of(LineCatalog.SELECT_RESOURCE));
-        List<Line> lines = List.of(new Line("uuid", lineCatalog, dr, dr2));
+        List<Line> lines = List.of(new Line("uuid", null, lineCatalog, dr, dr2));
         Mockito.when(dataServiceClient.getLinesByDigramId(anyString())).thenReturn(lines);
         Mockito.when(dataServiceClient.getLineCatalogById(anyString())).thenReturn(lineCatalog);
         Mockito.when(dataServiceClient.getDefinition(anyString(), eq("1"))).thenReturn("{\n" +
@@ -491,5 +491,4 @@ public class TransformerResourceTest {
                 .then()
                 .statusCode(200);
     }
-
 }

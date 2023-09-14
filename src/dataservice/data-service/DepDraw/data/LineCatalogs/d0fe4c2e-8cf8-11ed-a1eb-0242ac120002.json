@@ -1,8 +1,0 @@
-{
-    "uuid": "d0fe4c2e-8cf8-11ed-a1eb-0242ac120002",
-    "name": "Inherit MetaData",
-    "rules": [
-        "Inherit Annotations",
-        "Inherit Labels"
-    ]
-}

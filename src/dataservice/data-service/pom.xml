@@ -20,7 +20,7 @@
     </dependency>
     <dependency>
       <groupId>com.redhat.depdraw</groupId>
-      <artifactId>data-service-dao-file</artifactId>
+      <artifactId>data-service-dao-hibernate</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

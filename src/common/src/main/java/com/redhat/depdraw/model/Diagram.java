@@ -1,8 +1,9 @@
 package com.redhat.depdraw.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,12 +17,25 @@ import lombok.ToString;
 @Setter
 @ToString(exclude = "uuid")
 @EqualsAndHashCode(exclude = "uuid")
+@Table(name = "diagrams")
+@Entity
+@NamedQueries({
+        @NamedQuery(name="Diagram.findAll", query="SELECT d FROM Diagram d")
+})
 public class Diagram {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
 
     private String name;
 
-    private Set<DiagramResource> resources = new HashSet<>();
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.MERGE}, mappedBy="diagram")
+    @MapKey
+    private Map<String, DiagramResource> resources = new HashMap<>();
 
-    private Set<Line> lines = new HashSet<>();
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.MERGE}, mappedBy="diagram")
+    @MapKey
+    private Map<String, Line> lines = new HashMap<>();
 }

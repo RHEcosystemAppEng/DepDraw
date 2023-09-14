@@ -11,6 +11,6 @@ public class K8SResourceSchemaService {
     K8SResourceSchemaDao k8SResourceSchemaDao;
 
     public String getK8sResourceSchemaById(String k8sResourceSchemaId) {
-        return k8SResourceSchemaDao.getResourceCatalogById(k8sResourceSchemaId);
+        return k8SResourceSchemaDao.getK8sResourceSchemaById(k8sResourceSchemaId);
     }
 }

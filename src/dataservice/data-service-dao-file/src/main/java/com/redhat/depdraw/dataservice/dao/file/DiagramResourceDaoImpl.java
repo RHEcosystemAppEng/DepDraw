@@ -29,6 +29,8 @@ public class DiagramResourceDaoImpl implements DiagramResourceDao {
         String uuid = UUID.randomUUID().toString();
         dr.setUuid(uuid);
 
+        dr.getDiagram().getResources().put(dr.getUuid(), dr);
+
         return createInternal(diagramId, dr, StandardOpenOption.CREATE_NEW);
     }
 

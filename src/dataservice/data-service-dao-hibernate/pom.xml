@@ -4,44 +4,32 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.redhat.depdraw</groupId>
-    <artifactId>depdraw-services-parent</artifactId>
+    <artifactId>dataservice</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>common</artifactId>
+  <artifactId>data-service-dao-hibernate</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <properties>
-    <lombok.version>1.18.26</lombok.version>
-  </properties>
   <dependencies>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>${lombok.version}</version>
-    </dependency>
-    <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-client-jackson</artifactId>
+      <artifactId>quarkus-arc</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-jackson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
+      <groupId>com.redhat.depdraw</groupId>
+      <artifactId>data-service-dao-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
+
+    <!-- Hibernate ORM specific dependencies -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-orm</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jdbc-h2</artifactId>
-    </dependency>
+
   </dependencies>
   <build>
     <plugins>

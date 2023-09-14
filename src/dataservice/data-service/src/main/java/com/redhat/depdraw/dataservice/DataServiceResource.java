@@ -195,10 +195,8 @@ public class DataServiceResource {
                 diagramResourceId);
         final ResourceCatalog resourceCatalog = resourceCatalogService
                 .getResourceCatalogById(diagramResource.getResourceCatalog().getUuid());
-        final String k8sResourceSchema = k8sResourceSchemaService
-                .getK8sResourceSchemaById(resourceCatalog.getK8sResourceSchemaRef());
 
-        return Response.ok(k8sResourceSchema).build();
+        return Response.ok(resourceCatalog.getK8sResourceSchema()).build();
     }
 
     @POST

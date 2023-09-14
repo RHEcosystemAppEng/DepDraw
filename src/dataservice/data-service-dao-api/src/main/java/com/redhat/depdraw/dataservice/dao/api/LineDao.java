@@ -7,7 +7,7 @@ import com.redhat.depdraw.model.Line;
 import com.redhat.depdraw.model.LineCatalog;
 
 public interface LineDao {
-    Line create(String diagramId, LineCatalog lineCatalogID, DiagramResource source, DiagramResource destination);
+    Line create(String diagramId, Line line);
 
     Line getLineById(String diagramId, String lineId);
 
