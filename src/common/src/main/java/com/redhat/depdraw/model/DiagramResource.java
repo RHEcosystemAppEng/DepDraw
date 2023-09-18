@@ -42,6 +42,11 @@ public class DiagramResource {
     @JoinColumn(name = "resource_catalog_id", referencedColumnName = "id")
     private ResourceCatalog resourceCatalog;
 
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "line_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Line line;
+
     private String type;
 
     private Point position;
