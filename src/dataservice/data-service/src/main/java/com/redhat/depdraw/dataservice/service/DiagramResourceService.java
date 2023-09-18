@@ -1,6 +1,7 @@
 package com.redhat.depdraw.dataservice.service;
 
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
+import com.redhat.depdraw.dataservice.dao.api.LineDao;
 import com.redhat.depdraw.dto.DiagramResourceDTO;
 import com.redhat.depdraw.model.Diagram;
 import com.redhat.depdraw.model.DiagramResource;
@@ -9,7 +10,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +25,9 @@ public class DiagramResourceService {
     @Inject
     ResourceCatalogService resourceCatalogService;
 
+    @Inject
+    LineDao lineDao;
+
     @Transactional
     public DiagramResource createDiagramResource(String diagramId, DiagramResourceDTO drDTO) {
         final Diagram diagram = diagramService.getDiagramById(diagramId);
@@ -34,7 +37,8 @@ public class DiagramResourceService {
         dr.setName(drDTO.getName());
         dr.setResourceCatalog(rc);
         dr.setType(drDTO.getType());
-        dr.setPosition(new Point(drDTO.getPosX(), drDTO.getPosY()));
+        dr.setPosX(drDTO.getPosX());
+        dr.setPosY(drDTO.getPosY());
         dr.setWidth(drDTO.getWidth());
         dr.setHeight(drDTO.getHeight());
         dr.setDiagram(diagram);
@@ -52,7 +56,8 @@ public class DiagramResourceService {
         dr.setName(dto.getName());
         dr.setResourceCatalog(rc);
         dr.setType(dto.getType());
-        dr.setPosition(new Point(dto.getPosX(), dto.getPosY()));
+        dr.setPosX(dto.getPosX());
+        dr.setPosY(dto.getPosY());
         dr.setWidth(dto.getWidth());
         dr.setHeight(dto.getHeight());
         dr.setDiagram(diagram);
@@ -66,6 +71,8 @@ public class DiagramResourceService {
 
     @Transactional
     public void deleteDiagramResourceById(String diagramId, String diagramResourceId) {
+        lineDao.deleteLineByDiagramResourceId(diagramResourceId);
+
         diagramResourceDao.deleteDiagramResourceById(diagramId, diagramResourceId);
     }
 

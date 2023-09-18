@@ -2,6 +2,7 @@ package com.redhat.depdraw.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,10 @@ public class LineCatalog {
     private String uuid;
 
     private String name;
+
+    @OneToMany(mappedBy = "lineCatalog")
+    @JsonIgnore
+    private Set<Line> lines;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "line_catalog_rules", joinColumns = @JoinColumn(name = "line_catalog_id"))

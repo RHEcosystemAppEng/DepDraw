@@ -11,8 +11,6 @@ import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.awt.*;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -38,18 +36,15 @@ public class DiagramResource {
     @JsonIgnore
     private Diagram diagram;
 
-    @OneToOne(optional=false)
-    @JoinColumn(name = "resource_catalog_id", referencedColumnName = "id")
+    @ManyToOne(optional=false)
+    @JoinColumn(name = "resource_catalog_id", nullable = false)
     private ResourceCatalog resourceCatalog;
-
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "line_id", referencedColumnName = "id")
-    @JsonIgnore
-    private Line line;
 
     private String type;
 
-    private Point position;
+    private int posX;
+
+    private int posY;
 
     private int width;
 

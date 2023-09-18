@@ -5,6 +5,7 @@ import com.redhat.depdraw.model.Line;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
@@ -40,6 +41,14 @@ public class LineDaoImpl implements LineDao {
         query.setParameter("id", diagramId);
 
         return query.getResultList();
+    }
+
+    @Override
+    public void deleteLineByDiagramResourceId(String diagramResourceId) {
+        Query query = em.createNamedQuery("Line.deleteLineByDiagramResourceId");
+        query.setParameter("diagramResourceId", diagramResourceId);
+
+        query.executeUpdate();
     }
 
 }

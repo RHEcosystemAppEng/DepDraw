@@ -18,7 +18,8 @@ import lombok.ToString;
 @Entity
 @Table(name = "lines")
 @NamedQueries({
-        @NamedQuery(name="Line.findByDiagramId", query="SELECT d.lines FROM Diagram d where d.id = :id")
+        @NamedQuery(name="Line.findByDiagramId", query="SELECT d.lines FROM Diagram d where d.id = :id"),
+        @NamedQuery(name="Line.deleteLineByDiagramResourceId", query="DELETE FROM Line l where l.destination.id = :diagramResourceId or l.source.id = :diagramResourceId")
 })
 public class Line {
 
@@ -27,20 +28,20 @@ public class Line {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name="line_id") // join column is in table for Line
     @JsonIgnore
     private Diagram diagram;
 
-    @OneToOne(optional=false)
-    @JoinColumn(name="line_catalog_id")
+    @ManyToOne(optional=false)
+    @JoinColumn(name = "line_catalog_id", nullable = false)
     private LineCatalog lineCatalog;
 
-    @OneToOne(optional=false)
-    @JoinColumn(name="source_diagram_resource_id")
+    @ManyToOne(optional=false)
+    @JoinColumn(name="source_diagram_resource_id", nullable = false)
     private DiagramResource source;
 
-    @OneToOne(optional=false)
-    @JoinColumn(name="destination_diagram_resource_id")
+    @ManyToOne(optional=false)
+    @JoinColumn(name="destination_diagram_resource_id", nullable = false)
     private DiagramResource destination;
 }

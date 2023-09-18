@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Set;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,9 +31,9 @@ public class ResourceCatalog {
 
     private String name;
 
-    @OneToOne(mappedBy = "resourceCatalog")
+    @OneToMany(mappedBy = "resourceCatalog")
     @JsonIgnore
-    private DiagramResource diagramResource;
+    private Set<DiagramResource> diagramResources;
 
     @OneToOne(mappedBy = "resourceCatalog", optional=false)
     private K8SResourceSchema k8sResourceSchema;
