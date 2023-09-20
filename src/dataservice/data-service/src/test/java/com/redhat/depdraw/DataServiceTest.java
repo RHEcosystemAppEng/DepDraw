@@ -715,6 +715,298 @@ public class DataServiceTest {
     }
 
     @Test
+    public void testDeleteLine() {
+        Diagram d = new Diagram();
+        d.setName("testDiagram");
+
+        DiagramResourceDTO dr = new DiagramResourceDTO();
+        dr.setName("testDiagramResource");
+        dr.setResourceCatalogID("387585aa-8382-11ed-a1eb-0242ac120002");
+        dr.setPosX(1);
+        dr.setPosY(1);
+        dr.setType("type1");
+
+        DiagramResourceDTO dr2 = new DiagramResourceDTO();
+        dr2.setName("testDiagramResource2");
+        dr2.setResourceCatalogID("0ab01ee0-8211-11ed-a1eb-0242ac120002");
+        dr2.setPosX(1);
+        dr2.setPosY(1);
+        dr2.setType("type1");
+
+        DiagramResourceDTO dr3 = new DiagramResourceDTO();
+        dr3.setName("testDiagramResource3");
+        dr3.setResourceCatalogID("0ab01ee0-8211-11ed-a1eb-0242ac120002");
+        dr3.setPosX(1);
+        dr3.setPosY(1);
+        dr3.setType("type1");
+
+        //Create Diagram
+        Diagram diagram = given().body(d)
+                .contentType(ContentType.JSON)
+                .when().post("/diagrams").getBody().as(Diagram.class);
+        final String uuid = diagram.getUuid();
+
+        //Get Diagram by Id
+        given().body(d)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}", uuid)
+                .then()
+                .statusCode(200)
+                .body("name", is("testDiagram"))
+                .body("resources", is(anEmptyMap()))
+                .body("lines", is(anEmptyMap()))
+                .body("uuid", equalTo(uuid));
+
+        //Create DiagramResource
+        DiagramResource diagramResource = given().body(dr)
+                .contentType(ContentType.JSON)
+                .when().post("/diagrams/{diagramId}/resources", uuid).getBody().as(DiagramResource.class);
+
+        final String drUuid = diagramResource.getUuid();
+        Assertions.assertEquals("testDiagramResource", diagramResource.getName());
+//         Assertions.assertEquals(rc1, diagramResource.getResourceCatalog());
+        Assertions.assertEquals(drUuid, diagramResource.getUuid());
+
+        //Get DiagramResource by Id
+        diagramResource = given().body(dr)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, drUuid)
+                .then()
+                .statusCode(200).extract().as(DiagramResource.class);
+
+        Assertions.assertEquals("testDiagramResource", diagramResource.getName());
+//         Assertions.assertEquals(rc1, diagramResource.getResourceCatalog());
+        Assertions.assertEquals(drUuid, diagramResource.getUuid());
+
+        //Create another DiagramResource
+        DiagramResource diagramResource2 = given().body(dr2)
+                .contentType(ContentType.JSON)
+                .when().post("/diagrams/{diagramId}/resources", uuid).getBody().as(DiagramResource.class);
+        final String drUuid2 = diagramResource2.getUuid();
+
+        Assertions.assertEquals("testDiagramResource2", diagramResource2.getName());
+//         Assertions.assertEquals(rc2, diagramResource2.getResourceCatalog());
+        Assertions.assertEquals(drUuid2, diagramResource2.getUuid());
+
+        //Get second DiagramResource by Id
+        diagramResource2 = given().body(dr2)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, drUuid2)
+                .then()
+                .statusCode(200).extract().as(DiagramResource.class);
+
+        Assertions.assertEquals("testDiagramResource2", diagramResource2.getName());
+//         Assertions.assertEquals(rc2, diagramResource2.getResourceCatalog());
+        Assertions.assertEquals(drUuid2, diagramResource2.getUuid());
+
+        //Create a third DiagramResource
+        DiagramResource diagramResource3 = given().body(dr3)
+                .contentType(ContentType.JSON)
+                .when().post("/diagrams/{diagramId}/resources", uuid).getBody().as(DiagramResource.class);
+        final String drUuid3 = diagramResource3.getUuid();
+
+        Assertions.assertEquals("testDiagramResource3", diagramResource3.getName());
+//         Assertions.assertEquals(rc2, diagramResource3.getResourceCatalog());
+        Assertions.assertEquals(drUuid3, diagramResource3.getUuid());
+
+        //Get third DiagramResource by Id
+        diagramResource3 = given().body(dr3)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, drUuid3)
+                .then()
+                .statusCode(200).extract().as(DiagramResource.class);
+
+        Assertions.assertEquals("testDiagramResource3", diagramResource3.getName());
+//         Assertions.assertEquals(rc2, diagramResource3.getResourceCatalog());
+        Assertions.assertEquals(drUuid3, diagramResource3.getUuid());
+
+        //Get Diagram by Id
+        given().body(d)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}", uuid)
+                .then()
+                .statusCode(200)
+                .body("name", is("testDiagram"))
+                .body("resources", is(aMapWithSize(3)))
+                .body("lines", is(anEmptyMap()))
+                .body("uuid", equalTo(uuid));
+
+        //Get all DiagramResources
+        given()
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources", uuid)
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(3));
+
+        //Get lineCatalog
+        String lcuuid = "ef18d3dc-8cf8-11ed-a1eb-0242ac120002";
+        LineCatalog lineCatalog = given()
+                .contentType(ContentType.JSON)
+                .when().get("/linecatalogs/{lineCatalogId}", lcuuid).as(LineCatalog.class);
+        Assertions.assertEquals(lcuuid, lineCatalog.getUuid());
+        Assertions.assertEquals("Inherit Labels", lineCatalog.getName());
+        Assertions.assertEquals(1, lineCatalog.getRules().size());
+
+        LineDTO lineDTO = new LineDTO();
+        lineDTO.setDestination(diagramResource.getUuid());
+        lineDTO.setSource(diagramResource2.getUuid());
+        lineDTO.setLineCatalogID(lcuuid);
+
+        //Create Line
+        final String lineUuid = given().body(lineDTO)
+                .contentType(ContentType.JSON)
+                .when().post("/diagrams/{diagramId}/lines", uuid).getBody().as(Line.class).getUuid();
+
+        //Get Line by Id
+        Line line1 = given().body(lineDTO)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines/{lineId}", uuid, lineUuid)
+                .then()
+                .statusCode(200).extract().as(Line.class);
+
+        Assertions.assertEquals(lineCatalog, line1.getLineCatalog());
+        Assertions.assertEquals(diagramResource2, line1.getSource());
+        Assertions.assertEquals(diagramResource, line1.getDestination());
+        Assertions.assertEquals(lineUuid, line1.getUuid());
+
+        LineDTO lineDTO2 = new LineDTO();
+        lineDTO2.setDestination(diagramResource3.getUuid());
+        lineDTO2.setSource(diagramResource2.getUuid());
+        lineDTO2.setLineCatalogID(lcuuid);
+
+        //Create another Line
+        final String lineUuid2 = given().body(lineDTO2)
+                .contentType(ContentType.JSON)
+                .when().post("/diagrams/{diagramId}/lines", uuid).getBody().as(Line.class).getUuid();
+
+        //Get Line by Id
+        Line line2 = given().body(lineDTO2)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines/{lineId}", uuid, lineUuid2)
+                .then()
+                .statusCode(200).extract().as(Line.class);
+
+        Assertions.assertEquals(lineCatalog, line2.getLineCatalog());
+        Assertions.assertEquals(diagramResource2, line2.getSource());
+        Assertions.assertEquals(diagramResource3, line2.getDestination());
+        Assertions.assertEquals(lineUuid2, line2.getUuid());
+
+        //Get all Lines
+        given()
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines", uuid)
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(2));
+
+        //Delete Line
+        given()
+                .contentType(ContentType.JSON)
+                .when().delete("/diagrams/{diagramId}/lines/{lineId}", uuid, lineUuid2)
+                .then()
+                .statusCode(200);
+
+        //Get all Lines
+        given()
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines", uuid)
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(1));
+
+        //Get all DiagramResources
+        given()
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources", uuid)
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(3));
+
+        //Delete DiagramResource
+        given()
+                .contentType(ContentType.JSON)
+                .when().delete("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, diagramResource.getUuid())
+                .then()
+                .statusCode(200);
+
+        //Get all Lines
+        given()
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines", uuid)
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(0));
+
+        //Get Diagram by Id
+        given().body(d)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}", uuid)
+                .then()
+                .statusCode(200)
+                .body("name", is("testDiagram"))
+                .body("resources", is(aMapWithSize(2)))
+                .body("lines", is(anEmptyMap()))
+                .body("uuid", equalTo(uuid));
+
+        //Delete Diagram
+        given().body(d)
+                .contentType(ContentType.JSON)
+                .when().delete("/diagrams/{diagramId}", uuid)
+                .then()
+                .statusCode(200);
+
+        //Get Diagram by Id
+        given().body(d)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}", uuid)
+                .then()
+                .statusCode(200)
+                .body(emptyString());
+
+        //Get DiagramResource by Id
+        given().body(dr)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, drUuid)
+                .then()
+                .statusCode(200)
+                .body(emptyString());
+
+        //Get second DiagramResource by Id
+        given().body(dr2)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, drUuid2)
+                .then()
+                .statusCode(200)
+                .body(emptyString());
+
+        //Get third DiagramResource by Id
+        given().body(dr3)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/resources/{diagramResourceId}", uuid, drUuid3)
+                .then()
+                .statusCode(200)
+                .body(emptyString());
+
+        //Get Line by Id
+        given().body(lineDTO)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines/{lineId}", uuid, lineUuid)
+                .then()
+                .statusCode(200)
+                .body(emptyString());
+
+        //Get second Line by Id
+        given().body(lineDTO2)
+                .contentType(ContentType.JSON)
+                .when().get("/diagrams/{diagramId}/lines/{lineId}", uuid, lineUuid2)
+                .then()
+                .statusCode(200)
+                .body(emptyString());
+
+    }
+
+    @Test
     public void testUpdateDefinition() {
         Diagram d = new Diagram();
         d.setName("testDiagram");
