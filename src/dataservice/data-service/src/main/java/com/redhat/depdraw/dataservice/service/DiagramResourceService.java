@@ -1,16 +1,17 @@
 package com.redhat.depdraw.dataservice.service;
 
-import java.awt.*;
-import java.util.List;
-
-import com.redhat.depdraw.dataservice.dao.api.DiagramDao;
 import com.redhat.depdraw.dataservice.dao.api.DiagramResourceDao;
+import com.redhat.depdraw.dataservice.dao.api.LineDao;
 import com.redhat.depdraw.dto.DiagramResourceDTO;
 import com.redhat.depdraw.model.Diagram;
 import com.redhat.depdraw.model.DiagramResource;
 import com.redhat.depdraw.model.ResourceCatalog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class DiagramResourceService {
@@ -22,69 +23,75 @@ public class DiagramResourceService {
     DiagramService diagramService;
 
     @Inject
-    DiagramDao diagramDao;
-
-    @Inject
     ResourceCatalogService resourceCatalogService;
 
+    @Inject
+    LineDao lineDao;
+
+    @Transactional
     public DiagramResource createDiagramResource(String diagramId, DiagramResourceDTO drDTO) {
         final Diagram diagram = diagramService.getDiagramById(diagramId);
         final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(drDTO.getResourceCatalogID());
-        DiagramResource dr = new DiagramResource("", drDTO.getName(), rc, drDTO.getType(), new Point(drDTO.getPosX(), drDTO.getPosY()), drDTO.getWidth(), drDTO.getHeight());
-        final DiagramResource createdDiagramResource = diagramResourceDao.create(diagramId, dr);
 
-        diagram.getResources().add(createdDiagramResource);
+        DiagramResource dr = new DiagramResource();
+        dr.setName(drDTO.getName());
+        dr.setResourceCatalog(rc);
+        dr.setType(drDTO.getType());
+        dr.setPosX(drDTO.getPosX());
+        dr.setPosY(drDTO.getPosY());
+        dr.setWidth(drDTO.getWidth());
+        dr.setHeight(drDTO.getHeight());
+        dr.setDiagram(diagram);
 
-        diagramDao.updateDiagram(diagram);
-
-        return createdDiagramResource;
+        return diagramResourceDao.create(diagramId, dr);
     }
 
+    @Transactional
     public DiagramResource updateDiagramResource(String diagramId, String diagramResourceId, DiagramResourceDTO dto) {
-        DiagramResource dr = getDiagramResourceById(diagramId, diagramResourceId);
         final Diagram diagram = diagramService.getDiagramById(diagramId);
         final ResourceCatalog rc = resourceCatalogService.getResourceCatalogById(dto.getResourceCatalogID());
 
-        diagram.getResources().remove(dr);
+        DiagramResource dr = diagram.getResources().get(diagramResourceId);
 
         dr.setName(dto.getName());
         dr.setResourceCatalog(rc);
         dr.setType(dto.getType());
-        dr.setPosition(new Point(dto.getPosX(), dto.getPosY()));
+        dr.setPosX(dto.getPosX());
+        dr.setPosY(dto.getPosY());
         dr.setWidth(dto.getWidth());
         dr.setHeight(dto.getHeight());
-        final DiagramResource diagramResource = diagramResourceDao.updateDiagramResource(diagramId, dr);
+        dr.setDiagram(diagram);
 
-        diagram.getResources().add(diagramResource);
-
-        diagramDao.updateDiagram(diagram);
-
-        return diagramResource;
+        return diagramResourceDao.updateDiagramResource(diagramId, dr);
     }
 
     public DiagramResource getDiagramResourceById(String diagramId, String diagramResourceId) {
         return diagramResourceDao.getDiagramResourceById(diagramId, diagramResourceId);
     }
 
+    @Transactional
     public void deleteDiagramResourceById(String diagramId, String diagramResourceId) {
-        DiagramResource diagramResource = getDiagramResourceById(diagramId, diagramResourceId);
+        lineDao.deleteLineByDiagramResourceId(diagramResourceId);
+
         diagramResourceDao.deleteDiagramResourceById(diagramId, diagramResourceId);
-
-        final Diagram diagram = diagramService.getDiagramById(diagramId);
-        diagram.getResources().remove(diagramResource);
-
-        diagramDao.updateDiagram(diagram);
     }
 
     public List<DiagramResource> getDiagramResources(String diagramId) {
-        return diagramResourceDao.getDiagramResources(diagramId);
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
+
+        return new ArrayList<>(diagram.getResources().values());
     }
 
+    @Transactional
     public void updateDiagramResourceDefinition(String diagramId, String resourceId, String definition) {
         diagramResourceDao.updateDefinition(diagramId, resourceId, definition);
     }
 
     public String getDiagramResourceDefinition(String diagramId, String resourceId) {
-        return diagramResourceDao.getDefinition(diagramId, resourceId);
+        final Diagram diagram = diagramService.getDiagramById(diagramId);
+
+        DiagramResource dr = diagram.getResources().get(resourceId);
+
+        return dr.getDefinition();
     }
 }

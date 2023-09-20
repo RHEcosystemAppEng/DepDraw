@@ -13,7 +13,7 @@
   <modules>
     <module>data-service</module>
     <module>data-service-dao-api</module>
-    <module>data-service-dao-file</module>
+    <module>data-service-dao-hibernate</module>
   </modules>
   <dependencies>
     <dependency>
